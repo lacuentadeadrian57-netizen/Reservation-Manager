@@ -1,0 +1,75 @@
+{
+  "inventory": [
+    "Projector",
+    "Screen",
+    "Sound Technician",
+    "Ribbon Microphone",
+    "Acoustic Drums"
+  ],
+  "properties": {
+    "Projector": [
+      5,
+      30
+    ],
+    "Screen": [
+      3,
+      50
+    ],
+    "Sound Technician": [
+      2,
+      100
+    ],
+    "Ribbon Microphone": [
+      1,
+      70
+    ],
+    "Acoustic Drums": [
+      1,
+      30
+    ]
+  },
+  "locations": [
+    "Conference Room",
+    "Rehearsal Room",
+    "Main Auditorium",
+    "Meeting Room"
+  ],
+  "requisites": {
+    "Conference Room": [
+      "Projector",
+      "Screen",
+      "Sound Technician"
+    ],
+    "Rehearsal Room": [
+      "Acoustic Drums",
+      "Ribbon Microphone"
+    ],
+    "Main Auditorium": [
+      "Projector",
+      "Screen"
+    ],
+    "Meeting Room": [
+      "Projector"
+    ]
+  },
+  "reservations": [
+    {
+      "ID_name": "RES-001",
+      "start_date": "2025-10-20",
+      "end_date": "2025-10-20",
+      "location": "Conference Room"
+    },
+    {
+      "ID_name": "RES-002",
+      "start_date": "2025-10-21",
+      "end_date": "2025-10-21",
+      "location": "Meeting Room"
+    },
+    {
+      "ID_name": "RES-003",
+      "start_date": "2025-10-22",
+      "end_date": "2025-10-23",
+      "location": "Main Auditorium"
+    }
+  ]
+}
