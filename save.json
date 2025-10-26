@@ -6,27 +6,41 @@
     "Ribbon Microphone",
     "Acoustic Drums"
   ],
-  "properties": {
-    "Projector": [
-      5,
-      30
-    ],
-    "Screen": [
-      3,
-      50
-    ],
-    "Sound Technician": [
-      2,
-      100
-    ],
-    "Ribbon Microphone": [
-      1,
-      70
-    ],
-    "Acoustic Drums": [
-      1,
-      30
-    ]
+  "quantity": {
+    "Projector": 5,
+    "Screen": 3,
+    "Sound Technician": 2,
+    "Ribbon Microphone": 1,
+    "Acoustic Drums": 1,
+    "Whiteboard": 4,
+    "Coffee station": 2,
+    "Mirrors": 6,
+    "Lighting controls": 3,
+    "Backstage access": 1,
+    "Seating arrangement": 100,
+    "Flip chart": 3,
+    "Wi-Fi access": 1,
+    "TV screen": 2
+  },
+  "price": {
+    "Projector": 30,
+    "Screen": 50,
+    "Sound Technician": 100,
+    "Ribbon Microphone": 70,
+    "Acoustic Drums": 30,
+    "Whiteboard": 15,
+    "Coffee station": 25,
+    "Mirrors": 10,
+    "Lighting controls": 40,
+    "Backstage access": 60,
+    "Seating arrangement": 5,
+    "Flip chart": 20,
+    "Wi-Fi access": 10,
+    "TV screen": 35,
+    "Conference Room": 200,
+    "Rehearsal Room": 150,
+    "Main Auditorium": 500,
+    "Meeting Room": 100
   },
   "locations": [
     "Conference Room",
@@ -52,24 +66,53 @@
       "Projector"
     ]
   },
+  "optionals": {
+    "Conference Room": [
+      "Whiteboard",
+      "Coffee station"
+    ],
+    "Rehearsal Room": [
+      "Mirrors",
+      "Lighting controls"
+    ],
+    "Main Auditorium": [
+      "Backstage access",
+      "Seating arrangement"
+    ],
+    "Meeting Room": [
+      "Flip chart",
+      "Wi-Fi access"
+    ]
+  },
   "reservations": [
     {
-      "ID_name": "RES-001",
-      "start_date": "2025-10-20",
-      "end_date": "2025-10-20",
-      "location": "Conference Room"
+      "ID": "RES-001",
+      "start": "2025-10-20",
+      "end": "2025-10-20",
+      "location": "Conference Room",
+      "optionals": [
+        "Whiteboard",
+        "Coffee station"
+      ]
     },
     {
-      "ID_name": "RES-002",
-      "start_date": "2025-10-21",
-      "end_date": "2025-10-21",
-      "location": "Meeting Room"
+      "ID": "RES-002",
+      "start": "2025-10-21",
+      "end": "2025-10-21",
+      "location": "Meeting Room",
+      "optionals": [
+        "TV screen"
+      ]
     },
     {
-      "ID_name": "RES-003",
-      "start_date": "2025-10-22",
-      "end_date": "2025-10-23",
-      "location": "Main Auditorium"
+      "ID": "RES-003",
+      "start": "2025-10-22",
+      "end": "2025-10-23",
+      "location": "Main Auditorium",
+      "optionals": [
+        "Backstage access",
+        "Seating arrangement"
+      ]
     }
   ]
 }

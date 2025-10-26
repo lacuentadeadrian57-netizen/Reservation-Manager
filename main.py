@@ -25,7 +25,6 @@ class App:
             st.session_state.page = "form"
         if st.sidebar.button("Search details"):
             st.session_state.page = "details"
-
         if st.session_state.page == "form":
             self.form()
         elif st.session_state.page == "details":
@@ -33,16 +32,20 @@ class App:
 
     def form(self):
         st.header("Make a new reservation")
-        start_date = st.date_input("Start Date")
-        end_date = st.date_input("End Date")
+        start = st.date_input("Start Date")
+        end = st.date_input("End Date")
         location = st.selectbox("Location", self.manager.locations)
+        optionals = st.multiselect("Choose the optional resources", self.manager.optionals[location])
+        
+        st.write("Default Resources")
+        for requisite in self.manager.requisites[location]:
+            st.write(f"- {requisite}")
 
-        price_value = self.manager.calculate_price(start_date, end_date, location)
-    
+        price_value = self.manager.calculate_price(start, end, location, optionals)
         st.text_input("Total price", f"{price_value}", disabled=True)
 
         if st.button("Add Reservation"):
-            succeeded, msg = self.manager.add_reservation(start_date, end_date, location)
+            succeeded, msg = self.manager.add_reservation(start, end, location, optionals)
             if succeeded:
                 st.success(msg)
             else:
@@ -56,7 +59,7 @@ class App:
 
             ids = []
             for r in self.manager.reservations:
-                ids.append(r["ID_name"])
+                ids.append(r["ID"])
 
             selected_id = st.selectbox(
                 "Select a reservation to view details",
@@ -66,12 +69,17 @@ class App:
             selected = self.manager.id_map[selected_id]
             if selected:
                 st.subheader("Reservation Details")
-                st.write(f"**ID:** {selected['ID_name']}")
-                st.write(f"**Start Date:** {selected['start_date']}")
-                st.write(f"**End Date** {selected['end_date']}")
+                st.write(f"**ID:** {selected['ID']}")
+                st.write(f"**Start Date:** {selected['start']}")
+                st.write(f"**End Date** {selected['end']}")
                 st.write(f"**Location** {selected['location']}")
                 st.write(f"**Requires:** {", ".join(self.manager.requisites[selected['location']])}") 
-                st.write(f"**Price:** : {self.manager.calculate_price(selected["start_date"], selected["end_date"], selected["location"])}")
+                st.write(f"**Price:** : {self.manager.calculate_price(
+                    selected["start"],
+                    selected["end"],
+                    selected["location"],
+                    selected["optionals"]
+                )}")
 
             if st.button("Delete Reservation"):
                 self.manager.delete_reservation(selected_id)
