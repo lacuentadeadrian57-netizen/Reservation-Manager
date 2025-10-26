@@ -42,6 +42,22 @@
     "Main Auditorium": 500,
     "Meeting Room": 100
   },
+  "resources": [
+    "Projector",
+    "Screen",
+    "Sound Technician",
+    "Ribbon Microphone",
+    "Acoustic Drums",
+    "Whiteboard",
+    "Coffee station",
+    "Mirrors",
+    "Lighting controls",
+    "Backstage access",
+    "Seating arrangement",
+    "Flip chart",
+    "Wi-Fi access",
+    "TV screen"
+  ],
   "locations": [
     "Conference Room",
     "Rehearsal Room",

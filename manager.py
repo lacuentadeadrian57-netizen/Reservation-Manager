@@ -13,6 +13,7 @@ class Manager:
         self.inventory : list[str] = []
         self.price : dict[str, int] = {}
         self.quantity : dict[str, int] = {}
+        self.resources : list[str] = []
         self.locations : list[str] = []
         self.requisites : dict[str, list[str]] = {}
         self.optionals : dict[str, list[str]] = {}
@@ -20,31 +21,6 @@ class Manager:
 
         self.last_id = "RES-0"
         self.id_map = {}
-    
-    def add_reservation(self, start : date, end : date, location : str, optionals : list[str]):
-        if start > end:
-            return False, "Validation failed: the start date cannot be after the end date"
-        elif start < datetime.now().date():
-            return False, "Validation failed: the start date cannot be before the actual date"
-        for option in optionals:
-            if not option in self.optionals[location]:
-                return False, f"Validation failed: the selected option {option} is invalid"
-            
-        self.last_id = id_to_code(code_to_id(self.last_id) + 1)
-        _reserve = {
-            "ID": self.last_id,
-            "start": start,
-            "end": end,
-            "location": location,
-            "optionals": optionals
-        }
-        nearest = self.find_spot(_reserve)
-        if nearest[0] != start or nearest[1] != end:
-            return False, f"Reservation colides: available date: {start.isoformat()}-{end.isoformat()}"
-        
-        self.id_map[self.last_id] = _reserve
-        self.insert_reservation(_reserve)
-        return True, "Reservation added!"    
     
     def calculate_price(self, start : date, end : date, location : str, optionals : list[str]):
         delta = (end - start).days + 1
@@ -99,19 +75,57 @@ class Manager:
                 left = half + 1
         self.reservations.insert(left, reserve)
   
+    def add_reservation(self, start : date, end : date, location : str, optionals : list[str]):
+        if start > end:
+            return False, "Validation failed: the start date cannot be after the end date"
+        elif start < datetime.now().date():
+            return False, "Validation failed: the start date cannot be before the actual date"
+        for option in optionals:
+            if not option in self.optionals[location]:
+                return False, f"Validation failed: the selected option {option} is invalid"
+            
+        self.last_id = id_to_code(code_to_id(self.last_id) + 1)
+        _reserve = {
+            "ID": self.last_id,
+            "start": start,
+            "end": end,
+            "location": location,
+            "optionals": optionals
+        }
+        nearest = self.find_spot(_reserve)
+        if nearest[0] != start or nearest[1] != end:
+            return False, f"Reservation colides: available date: {start.isoformat()}-{end.isoformat()}"
+        
+        self.id_map[self.last_id] = _reserve
+        self.insert_reservation(_reserve)
+        return True, "Reservation added!"    
+    
     def delete_reservation(self, id):
         reservations = []
-        for r in self.reservations:
-            if(id != r["ID"]):
-                reservations.append(r)
+        for reservation in self.reservations:
+            if(id != reservation["ID"]):
+                reservations.append(reservation)
         self.reservations = reservations
         del self.id_map[id]
+
+    def add_resource(self, name : str, quantity : int, price : int):
+        return True, "Succeded"
+    
+    def delete_resource(self, name : str):
+        return     
+    
+    def add_location(self, name : str, price : int, requisites : list[str], optionals : list[str]):
+        return True, "Succeded"
+    
+    def delete_location(self, name : str):
+        return 
 
     def save(self, filename : str):
         data = {
             "inventory" : self.inventory,
             "price" : self.price,
             "quantity" : self.quantity,
+            "resources" : self.resources,
             "locations" : self.locations,
             "requisites" : self.requisites,
             "optionals" : self.optionals,
@@ -134,6 +148,7 @@ class Manager:
             self.inventory = data["inventory"]
             self.price = data["price"]
             self.quantity = data["quantity"]
+            self.resources = data["resources"]
             self.locations = data["locations"]
             self.requisites = data["requisites"]
             self.optionals = data["optionals"]
