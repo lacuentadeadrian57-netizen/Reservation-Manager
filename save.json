@@ -1,11 +1,4 @@
 {
-  "inventory": [
-    "Projector",
-    "Screen",
-    "Sound Technician",
-    "Ribbon Microphone",
-    "Acoustic Drums"
-  ],
   "quantity": {
     "Projector": 5,
     "Screen": 3,

@@ -44,21 +44,21 @@ class App:
         start = st.date_input("Start Date")
         end = st.date_input("End Date")
         location = st.selectbox("Location", self.manager.locations)
-        optionals = st.multiselect("Choose the optional resources", self.manager.optionals[location])
-        
-        st.write("Default Resources")
-        for requisite in self.manager.requisites[location]:
-            st.write(f"- {requisite}")
+        if location:
+            optionals = st.multiselect("Choose the optional resources", self.manager.optionals[location])
+            st.write("Default Resources")
+            for requisite in self.manager.requisites[location]:
+                st.write(f"- {requisite}")
 
-        price_value = self.manager.calculate_price(start, end, location, optionals)
-        st.text_input("Total price", f"{price_value}", disabled=True)
+            price_value = self.manager.calculate_price(start, end, location, optionals)
+            st.text_input("Total price", f"{price_value}", disabled=True)
 
-        if st.button("Add Reservation"):
-            succeeded, msg = self.manager.add_reservation(start, end, location, optionals)
-            if succeeded:
-                st.success(msg)
-            else:
-                st.error(msg)
+            if st.button("Add Reservation"):
+                succeeded, msg = self.manager.add_reservation(start, end, location, optionals)
+                if succeeded:
+                    st.success(msg)
+                else:
+                    st.error(msg)
    
     def details(self):
         st.header("Search details")
@@ -74,8 +74,12 @@ class App:
                 "Select a reservation to view details",
                 ids
             )
-
+    
             selected = self.manager.id_map[selected_id]
+
+            start = st.date_input("Start Date", value=selected['start'])
+            end = st.date_input("End Date", value=selected['end'])
+
             if selected:
                 st.subheader("Reservation Details")
                 st.write(f"**ID:** {selected['ID']}")
@@ -101,11 +105,12 @@ class App:
         data = []
         for location in self.manager.locations:
             data.append(
-                {
-                    "location": location,
-                    "price": self.manager.price[location],
-                }
-            )
+                    {
+                        "location": location,
+                        "price": self.manager.price[location],
+                    }
+                )
+
         with st.form("Add location"):
             name = st.text_input("Location Name")
             price = st.number_input("Price", min_value=0, step=1)
@@ -128,39 +133,44 @@ class App:
                 self.manager.locations
             )
 
+            price = st.number_input("Price", 0, step=1, value=self.manager.price[location])
+            if price != self.manager.price[location]:
+                self.manager.update_price(location, price)
+                st.rerun()
+
             related = []
             for required in self.manager.requisites[location]:
-                related.append(
-                    {
-                        "resource" : required,
-                        "relation" : "required"
-                    }
-                )
+                related.append( 
+                        {
+                            "resource" : required,
+                            "relation" : "required"
+                        }
+                    )
             for optional in self.manager.optionals[location]:
                 related.append(
-                    {
-                        "resource" : optional,
-                        "relation" : "optional"
-                    }
-                )
+                        {
+                            "resource" : optional,
+                            "relation" : "optional"
+                        }
+                    )
+                
             df = pd.DataFrame(related)
             st.dataframe(df)
 
             if st.button("Delete location"):
-                st.warning("⚠️ Warning: Deleting this location may also remove any reservations that depend on it.")
-                if st.button("Confirm"):
-                    self.manager.delete_location(location)
+                self.manager.delete_location(location)
+                st.rerun()
 
     def resources(self):
         data = []
         for resource in self.manager.resources:
             data.append(
-                {
-                    "resource": resource,
-                    "quantity": self.manager.quantity[resource],
-                    "price": self.manager.price[resource],
-                }
-            )
+                    {
+                        "resource": resource,
+                        "quantity": self.manager.quantity[resource],
+                        "price": self.manager.price[resource],
+                    }
+                )
         with st.form("Add resource"):
             name = st.text_input("Resource Name")
             quantity = st.number_input("Quantity", min_value=0, step=1)
@@ -181,15 +191,21 @@ class App:
                 "Select a resource to view details",
                 self.manager.resources
             )
+
+            price = st.number_input("Price", 0, step=1, value=self.manager.price[resource])
+            if price != self.manager.price[resource]:
+                self.manager.update_price(resource, price)
+                st.rerun()
+
+            quantity = st.number_input("Quantity", 1, step=1, value=self.manager.quantity[resource])
+            if quantity != self.manager.quantity[resource]:
+                self.manager.update_quantity(resource, quantity)
+                st.rerun()
+
             if st.button("Delete Resource"):
-                st.warning("⚠️ Warning: Deleting this resource may also remove any reservations that depend on it.")
-                if st.button("Confirm"):
-                    self.manager.delete_resource(resource)
+                self.manager.delete_resource(resource)
+                st.rerun()
             
-            
-
-
-
 if __name__ == "__main__":
     app = App()
     app.render()
