@@ -35,6 +35,26 @@
     "Main Auditorium": 500,
     "Meeting Room": 100
   },
+  "exclusions": {
+    "Projector": [],
+    "Screen": [],
+    "Sound Technician": [],
+    "Ribbon Microphone": [],
+    "Acoustic Drums": [],
+    "Whiteboard": [],
+    "Coffee station": [],
+    "Mirrors": [
+      "Lighting controls"
+    ],
+    "Lighting controls": [
+      "Mirrors"
+    ],
+    "Backstage access": [],
+    "Seating arrangement": [],
+    "Flip chart": [],
+    "Wi-Fi access": [],
+    "TV screen": []
+  },
   "resources": [
     "Projector",
     "Screen",

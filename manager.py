@@ -12,6 +12,7 @@ class Manager:
     def __init__(self):
         self.price : dict[str, int] = {}
         self.quantity : dict[str, int] = {}
+        self.exclusions : dict[str, list[str]] = {}
         self.resources : list[str] = []
         self.locations : list[str] = []
         self.requisites : dict[str, list[str]] = {}
@@ -20,15 +21,6 @@ class Manager:
 
         self.last_id = "RES-0"
         self.id_map = {}
-    
-    def calculate_price(self, start : date, end : date, location : str, optionals : list[str]):
-        delta = (end - start).days + 1
-        total = self.price[location]
-        for requisite in self.requisites[location]:
-            total += self.price[requisite]
-        for optional in optionals:
-            total += self.price[optional]
-        return total * delta
     
     def stock(self, inventory : dict[str , int], reservation : dict[str, Any]):
         for optional in reservation["optionals"]:
@@ -91,9 +83,13 @@ class Manager:
             return False, "Validation failed: the start date cannot be after the end date"
         elif start < datetime.now().date():
             return False, "Validation failed: the start date cannot be before the actual date"
-        for option in optionals:
-            if not option in self.optionals[location]:
-                return False, f"Validation failed: the selected option {option} is invalid"
+        for i in range(len(optionals)):
+            optional = optionals[i]
+            for j in range(i):
+                if optionals[j] in self.exclusions[optional]:
+                    return False, f"Validation failed: the selected option {optional} excludes {optionals[j]}"
+            if not optional in self.optionals[location]:
+                return False, f"Validation failed: the selected option {optional} is invalid"
             
         self.last_id = id_to_code(code_to_id(self.last_id) + 1)
         _reserve = {
@@ -120,10 +116,13 @@ class Manager:
         self.reservations = reservations
         del self.id_map[id]
 
-    def add_resource(self, name : str, quantity : int, price : int):
+    def add_resource(self, name : str, quantity : int, price : int, exclusions : list[str]):
         if name in self.resources:
             return False, f"Resource {name} already tracked"
         self.resources.append(name)
+        self.exclusions[name] = exclusions
+        for exlusion in exclusions:
+            self.exclusions[exlusion].append(name)
         self.quantity[name] = quantity
         self.price[name] = price
         return True, "Operation Succeded"
@@ -147,6 +146,7 @@ class Manager:
                 else:
                     del self.requisites[location]
             self.locations = locations
+            del self.exclusions[name]
             del self.quantity[name]
             del self.price[name]
             self.resources.remove(name)
@@ -154,6 +154,10 @@ class Manager:
     def add_location(self, name : str, price : int, requisites : list[str], optionals : list[str]):
         if name in self.locations:
             return False, f"Location {name} already tracked"
+        for requisite in requisites:
+            for optional in optionals:
+                if optional in self.exclusions[requisite]:
+                    return False, f"Validation failed: the selected requisite {requisite} excludes {optional}"
         self.locations.append(name)
         self.price[name] = price
         self.requisites[name] = requisites
@@ -172,6 +176,15 @@ class Manager:
             del self.optionals[name]
             self.locations.remove(name) 
 
+    def calculate_price(self, start : date, end : date, location : str, optionals : list[str]):
+        delta = (end - start).days + 1
+        total = self.price[location]
+        for requisite in self.requisites[location]:
+            total += self.price[requisite]
+        for optional in optionals:
+            total += self.price[optional]
+        return total * delta
+
     def update_price(self, name : str, value : int):
         if value > 0:
            self.price[name] = value
@@ -186,6 +199,7 @@ class Manager:
         data = {
             "price" : self.price,
             "quantity" : self.quantity,
+            "exclusions" : self.exclusions,
             "resources" : self.resources,
             "locations" : self.locations,
             "requisites" : self.requisites,
@@ -208,6 +222,7 @@ class Manager:
         if data:
             self.price = data["price"]
             self.quantity = data["quantity"]
+            self.exclusions = data["exclusions"]
             self.resources = data["resources"]
             self.locations = data["locations"]
             self.requisites = data["requisites"]
