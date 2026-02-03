@@ -111,14 +111,6 @@ Restrictions are the rules that guarantee valid reservations. They are actively 
 - Delete reservations, locations, and resources
 - Enforce restrictions (no overlaps, valid durations, capacity limits, opening hours)
 
-### Project Structure
-project/
-│── main.py          # Streamlit app entry point
-│── manager.py       # Business logic
-│── loader.py        # Load/save JSON data
-│── save.json        # Example data file
-│── requirements.txt # Dependencies
-
 ### Installation and Execution
 
 1. **Clone the repository**
