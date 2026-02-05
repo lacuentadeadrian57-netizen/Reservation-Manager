@@ -1,0 +1,16 @@
+[server] 
+# Set the port where Streamlit will run 
+# port = 8501 
+
+# Enable headless mode (useful for deployment) 
+headless = true 
+
+# Allow remote connections 
+# enableCORS = false
+
+[theme]
+primaryColor = "#1E88E5" 
+backgroundColor = "#100f0fff" 
+secondaryBackgroundColor = "#1c1c1cff" 
+textColor = "#fdfcfcff" 
+font = "sans serif"

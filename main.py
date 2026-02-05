@@ -1,5 +1,3 @@
-#python3 -m streamlit run main.py
-# UV python project manager 
 import streamlit as st
 import pandas as pd
 from datetime import date
@@ -259,6 +257,7 @@ class App:
                 st.rerun()
 
     def data(self):
+        st.header("Save & Load")
         load_filename = st.text_input("Load filename", value="save.json")
         if st.button("Load file"):
             succeded = self._manager.load(load_filename)
